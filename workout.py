@@ -1,3 +1,9 @@
+# TODO
+# define a function to convert bs4 strings to reg strings
+# create main list
+# export list into a csv
+# to be continued in java
+
 import requests
 from bs4 import BeautifulSoup
 
