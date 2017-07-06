@@ -1,5 +1,5 @@
 # TODO
-# create main list
+# create main list and turn in pandas dataframe
 # export list into a csv
 # to be continued in java
 
@@ -37,6 +37,9 @@ for li in name_lis:
 
 # keeps track of url
 id = 0
+
+# export list
+csv_list = []
 
 # loop through each body part page
 for body_part in body_parts:
@@ -88,9 +91,9 @@ for body_part in body_parts:
 
 
 		for i in range(len(exercise_name_list)):
-			print exercise_name_list[i]
-			#print body_part
-			print equipment_list[i]
-			print type_list[i]
+			csv_list.append(exercise_name_list[i])
+			csv_list.append(body_part)
+			csv_list.append(equipment_list[i])
+			csv_list.append(type_list[i])
 
 	id += 1
