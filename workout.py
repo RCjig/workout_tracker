@@ -1,6 +1,5 @@
 # TODO
 # define a function to convert bs4 strings to reg strings
-# add exercise type
 # create main list
 # export list into a csv
 # to be continued in java
@@ -66,23 +65,28 @@ for body_part in body_parts:
 		soup = BeautifulSoup(page.content, 'html.parser')
 
 	
-		# add exercise names and equipment required to lists
+		# add exercise names and equipment required and exercise type to lists
 		exercise_names_container = soup.findAll('h3')
 		exercise_name_list = []
 
 		for h3 in exercise_names_container:
 			exercise_name_list.append(unicode(h3.find(text=True)).encode('ascii', 'ignore'))
 
-		equipment_container = soup.findAll('p')
+		info_container = soup.findAll('p')
 		equipment_list = []
+		type_list = []
 
-		for p in equipment_container:
+		for p in info_container:
 			if "Equipment : " in unicode(p.find(text=True)).encode('ascii', 'ignore'):
 				equipment_list.append(unicode(p.find(text=True)).encode('ascii', 'ignore')[12:-1])
+			elif "Type : " in unicode(p.find(text=True)).encode('ascii', 'ignore'):
+				type_list.append(unicode(p.find(text=True)).encode('ascii', 'ignore')[7:-1])
+
 
 		for i in range(len(exercise_name_list)):
 			print exercise_name_list[i]
 			#print body_part
-			#print equipment_list[i]
+			print equipment_list[i]
+			print type_list[i]
 
 	id += 1
