@@ -1,5 +1,6 @@
 # TODO
 # define a function to convert bs4 strings to reg strings
+# add exercise type
 # create main list
 # export list into a csv
 # to be continued in java
