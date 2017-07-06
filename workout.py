@@ -1,11 +1,15 @@
 # TODO
-# define a function to convert bs4 strings to reg strings
 # create main list
 # export list into a csv
 # to be continued in java
 
 import requests
 from bs4 import BeautifulSoup
+
+# function to convert bs4 objects to strings
+def bs4_to_str(bs4_object):
+	txt = unicode(bs4_object.find(text=True)).encode('ascii', 'ignore')
+	return txt
 
 # main url
 url = """https://www.jefit.com/exercises/bodypart.php?id=11&exercises=All&page=
@@ -28,9 +32,8 @@ name_lis = name_source.findAll('li')
 # list for body part names
 body_parts = []
 for li in name_lis:
-	body_part_name = li.find(text=True)
-	if (body_part_name != "> All"):
-		body_parts.append(unicode((body_part_name)).encode('ascii', 'ignore'))
+	if (bs4_to_str(li) != "> All"):
+		body_parts.append(bs4_to_str(li))
 
 # keeps track of url
 id = 0
@@ -50,7 +53,7 @@ for body_part in body_parts:
 	soup = BeautifulSoup(page.content, 'html.parser')
 
 	hold_num_pgs = soup.find(class_="pageCell")
-	num_pages = unicode((hold_num_pgs.find(text=True))).encode('ascii', 'ignore')[10:]
+	num_pages = bs4_to_str(hold_num_pgs)[10:]
 
 	# loop through each page for current body part
 	for current_page in range(1, int(num_pages) + 1):
@@ -70,17 +73,18 @@ for body_part in body_parts:
 		exercise_name_list = []
 
 		for h3 in exercise_names_container:
-			exercise_name_list.append(unicode(h3.find(text=True)).encode('ascii', 'ignore'))
+			exercise_name_list.append(bs4_to_str(h3))
 
 		info_container = soup.findAll('p')
 		equipment_list = []
 		type_list = []
 
 		for p in info_container:
-			if "Equipment : " in unicode(p.find(text=True)).encode('ascii', 'ignore'):
-				equipment_list.append(unicode(p.find(text=True)).encode('ascii', 'ignore')[12:-1])
-			elif "Type : " in unicode(p.find(text=True)).encode('ascii', 'ignore'):
-				type_list.append(unicode(p.find(text=True)).encode('ascii', 'ignore')[7:-1])
+			info = bs4_to_str(p)
+			if "Equipment : " in info:
+				equipment_list.append(info[12:-1])
+			elif "Type : " in info:
+				type_list.append(info[7:-1])
 
 
 		for i in range(len(exercise_name_list)):
