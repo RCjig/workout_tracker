@@ -1,9 +1,5 @@
-# TODO
-# create main list and turn in pandas dataframe
-# export list into a csv
-# to be continued in java
-
 import requests
+import pandas as pd
 from bs4 import BeautifulSoup
 
 # function to convert bs4 objects to strings
@@ -38,8 +34,11 @@ for li in name_lis:
 # keeps track of url
 id = 0
 
-# export list
-csv_list = []
+# lists for dataframe
+exercise_name_list = []
+equipment_list = []
+type_list = []
+muscle_list = []
 
 # loop through each body part page
 for body_part in body_parts:
@@ -73,14 +72,12 @@ for body_part in body_parts:
 	
 		# add exercise names and equipment required and exercise type to lists
 		exercise_names_container = soup.findAll('h3')
-		exercise_name_list = []
 
 		for h3 in exercise_names_container:
 			exercise_name_list.append(bs4_to_str(h3))
+			muscle_list.append(body_part)
 
 		info_container = soup.findAll('p')
-		equipment_list = []
-		type_list = []
 
 		for p in info_container:
 			info = bs4_to_str(p)
@@ -89,11 +86,15 @@ for body_part in body_parts:
 			elif "Type : " in info:
 				type_list.append(info[7:-1])
 
-
-		for i in range(len(exercise_name_list)):
-			csv_list.append(exercise_name_list[i])
-			csv_list.append(body_part)
-			csv_list.append(equipment_list[i])
-			csv_list.append(type_list[i])
-
 	id += 1
+
+# create dataframe
+export_df = pd.DataFrame(
+	{"Exercise Name": exercise_name_list,
+	 "Muscle Worked": muscle_list,
+	 "Equipment Required": equipment_list,
+	 "Exercise Type": type_list
+	})
+
+# export as a csv file
+export_df.to_csv("exercise_database.csv", sep='\t')
