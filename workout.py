@@ -88,7 +88,7 @@ for body_part in body_parts:
 
 	id += 1
 
-# create dataframe
+# create dataframe and export as csv
 export_df = pd.DataFrame(
 	{"Exercise Name": exercise_name_list,
 	 "Muscle Worked": muscle_list,
@@ -96,5 +96,4 @@ export_df = pd.DataFrame(
 	 "Exercise Type": type_list
 	})
 
-# export as a csv file
 export_df.to_csv("exercise_database.csv", sep='\t')
