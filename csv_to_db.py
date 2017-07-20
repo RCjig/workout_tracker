@@ -16,7 +16,7 @@ with open('data.csv', 'rb') as open_csv:
 curs.executemany("INSERT INTO exercises (id, equip_req, ex_name, ex_type, muscle) VALUES (?, ?, ?, ?, ?);", to_db)
 
 # create tables for user use
-curs.execute("CREATE TABLE user_database(user_id INTEGER, ex_id INTEGER, set_1 INTEGER, set_1_reps INTEGER, set_2 INTEGER, set_2_reps INTEGER, set_3 INTEGER, set_3_reps INTEGER,set_4 INTEGER, set_4_reps INTEGER, set_5 INTEGER, set_5_reps INTEGER);")
+curs.execute("CREATE TABLE user_database(user_id INTEGER, ex_id INTEGER, weight INTEGER, set_1 INTEGER, set_1_reps INTEGER, set_2 INTEGER, set_2_reps INTEGER, set_3 INTEGER, set_3_reps INTEGER,set_4 INTEGER, set_4_reps INTEGER, set_5 INTEGER, set_5_reps INTEGER);")
 curs.execute("CREATE TABLE user_list(user_id INTEGER, username TEXT);")
 
 conn.commit()
