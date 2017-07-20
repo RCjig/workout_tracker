@@ -17,13 +17,13 @@ public class DBInputter {
 		
 		// set up scanner and username
 		String name;
+		int userNumber;
 		Scanner input = new Scanner(System.in);
 		
 		System.out.println("New User? [y/n]");
 		if (input.hasNext() && input.nextLine().equalsIgnoreCase("y")) {
 			System.out.println("Enter your name");
 			name = input.nextLine();
-			int userNumber;
 			try {
 				Statement newUser = conn.createStatement();
 				ResultSet userNum = newUser.executeQuery(
@@ -39,6 +39,15 @@ public class DBInputter {
 		else {
 			System.out.println("Enter your name");
 			name = input.nextLine();
+			try {
+				Statement retUser = conn.createStatement();
+				ResultSet userNum = retUser.executeQuery(
+					"SELECT user_id AS num FROM user_list WHERE username =='"
+					+ name + "';");
+				System.out.print(userNum.getInt("num"));
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 		/*System.out.println("What would you like to do today?");
 		System.out.println("Build a workout [1] or update workout log [2]");
