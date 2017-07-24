@@ -19,6 +19,56 @@ public class DBInputter {
 		"Olympic Weight Lifting"
 	};
 
+	public static void workoutMaker(Connection conn, boolean[] mOps, 
+		int[] mCounts, boolean[] eOps, boolean[] tOps) {
+		
+		try {
+			Statement results = conn.createStatement();
+		
+			String equip = "";
+			String type = "";
+		
+			for (int i = 0; i < mOps.length; i++) {
+				if (mOps[i]) {
+				
+					/*if (eOps[i]) {
+						equip = " AND equip_req = '" + EQUIPMENT[i] + "'";
+					} else {
+						equip = "";
+					}
+					
+					if (tOps[i]) {
+						type = " AND ex_type = '" + TYPES[i] + "'";
+					} else {
+						type = "";
+					}*/
+						
+					ResultSet currRes = results.executeQuery(
+						"SELECT ex_name FROM exercises WHERE"
+							+ " muscle = '" + MUSCLES[i] + "'" //+ equip + type
+							+ " ORDER BY RANDOM()"
+							+ " LIMIT " + mCounts[i] + ";");
+					
+					ResultSetMetaData crMD = currRes.getMetaData();
+					int colNum = crMD.getColumnCount();
+					while (currRes.next()) {
+						for (int j = 1; j <= colNum; j++) {
+							if (j > 1)
+								System.out.print(", ");
+							
+							String colVal = currRes.getString(j);
+							System.out.print(colVal);
+						}
+						System.out.println();
+					}
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		
+	};
+	
 	public static void main(String[] args) {
 		
 		// set up connect
@@ -75,10 +125,10 @@ public class DBInputter {
 		// program options
 		System.out.println("What would you like to do today?");
 		System.out.println("Build a workout [1] or update workout log [2]");
-		int option = input.nextInt();
+		String option = input.nextLine();
 		
 		// build a workout / recommender
-		if (option == 1) {
+		if (option.indexOf('1') >= 0) {
 			System.out.println("Choose muscle(s) to workout:");
 			System.out.println("Abs [a]. Back [b], Biceps [c], Chest [d], "
 					+ "Forearm [e], Glutes [f], Shoulders [g], Triceps [h], "
@@ -88,9 +138,9 @@ public class DBInputter {
 			
 			// muscle option array setting
 			boolean[] muscleOptions = new boolean[11];
-			String mOInput = input.nextLine();
 			char optionCheck = 'a';
 			
+			String mOInput = input.nextLine();
 			for (int i = 0; i < 11; i++) {
 				if (mOInput.indexOf(optionCheck++) >= 0) {
 					muscleOptions[i] = true;
@@ -108,6 +158,7 @@ public class DBInputter {
 					exerciseCounts[i] = input.nextInt();
 				}
 			}
+			input.nextLine();
 			
 			System.out.println("What equipment is available?");
 			System.out.println("All [a], Bands [b], barbell [c], bench [d], "
@@ -147,6 +198,9 @@ public class DBInputter {
 					typeOptions[i] = true;
 				}
 			}
+			
+			workoutMaker(conn, muscleOptions, exerciseCounts, equipmentOptions,
+				typeOptions);
 			
 		} else {
 			// update personal log in database
