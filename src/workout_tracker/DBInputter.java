@@ -25,30 +25,70 @@ public class DBInputter {
 		try {
 			Statement results = conn.createStatement();
 		
-			String equip = "";
-			String type = "";
+			String query;
+			String equip = " AND (equip_req = ";
+			String type = " AND (ex_type = ";
+			boolean first = true;
+			boolean eOpsBool = false;
+			boolean tOpsBool = false;
+			
+			// set string for equipment select
+			for (int i = 0; i < eOps.length; i++) {
+				if (eOps[i]) {
+					eOpsBool = true;
+					if (first) {
+						first = false;
+					} else {
+						equip += " OR equip_req = ";
+					}
+					eOpsBool = true;
+					equip += "'" + EQUIPMENT[i] + "'";
+				}
+			}
+			equip += ")";
+			
+			first = true;
+			
+			// set string for type select
+			for (int i = 0; i < tOps.length; i++) {
+				if (tOps[i]) {
+					tOpsBool = true;
+					if (first) {
+						first = false;
+					} else {
+						type += " OR ex_type = ";
+					}
+					tOpsBool = true;
+					type += "'" + TYPES[i] + "'";
+				}
+			}
+			type += ")";
 		
 			for (int i = 0; i < mOps.length; i++) {
 				if (mOps[i]) {
 				
-					/*if (eOps[i]) {
-						equip = " AND equip_req = '" + EQUIPMENT[i] + "'";
-					} else {
-						equip = "";
+					// choose correct query string
+					if (!eOpsBool && !tOpsBool) {
+						query = "Please try again with correct options";
+					} 
+					
+					else if (eOpsBool && !tOpsBool) {
+						query = "SELECT ex_name FROM exercises WHERE"
+								+ " muscle = '" + MUSCLES[i] + "'"
+								+ equip + " ORDER BY RANDOM()"
+								+ " LIMIT " + mCounts[i] + ";";
+					} 
+					
+					else {
+						query = "SELECT ex_name FROM exercises WHERE"
+								+ " muscle = '" + MUSCLES[i] + "'"
+								+ equip + type + " ORDER BY RANDOM()"
+								+ " LIMIT " + mCounts[i] + ";";
 					}
-					
-					if (tOps[i]) {
-						type = " AND ex_type = '" + TYPES[i] + "'";
-					} else {
-						type = "";
-					}*/
 						
-					ResultSet currRes = results.executeQuery(
-						"SELECT ex_name FROM exercises WHERE"
-							+ " muscle = '" + MUSCLES[i] + "'" //+ equip + type
-							+ " ORDER BY RANDOM()"
-							+ " LIMIT " + mCounts[i] + ";");
+					ResultSet currRes = results.executeQuery(query);
 					
+					// print out results
 					ResultSetMetaData crMD = currRes.getMetaData();
 					int colNum = crMD.getColumnCount();
 					while (currRes.next()) {
