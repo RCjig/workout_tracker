@@ -93,9 +93,6 @@ public class DBInputter {
 					int colNum = crMD.getColumnCount();
 					while (currRes.next()) {
 						for (int j = 1; j <= colNum; j++) {
-							if (j > 1)
-								System.out.print(", ");
-							
 							String colVal = currRes.getString(j);
 							System.out.print(colVal);
 						}
@@ -122,7 +119,7 @@ public class DBInputter {
 		
 		// set up scanner and username
 		String name;
-		int userNumber;
+		int userNumber = 0;
 		Scanner input = new Scanner(System.in);
 		
 		// new user
@@ -243,8 +240,52 @@ public class DBInputter {
 				typeOptions);
 			
 		} else {
-			// update personal log in database
-			System.out.println("Please input excercise name");
+			// update personal log database
+			try {
+				while (true) {
+					// get user input for data
+					System.out.println("Please input excercise name");
+					String exName = input.nextLine();
+					
+					System.out.println("New Exercise? [y/n]");
+					String newOp = input.nextLine();
+					
+					System.out.println("Weight?");
+					int weight = input.nextInt();
+					
+					System.out.println("Sets?");
+					int sets = input.nextInt();
+					input.nextLine();
+					
+					System.out.println("Reps? (ex: 8 8 8 8)");
+					String reps = input.nextLine();
+					
+					int exId; // TODO sql select query to get exercise id num
+					
+					if (newOp.indexOf('y') >= 0) {
+						String insert = "INSERT INTO user_database(user_id, ex_id,"
+							+ " weight, sets, reps_per_set) VALUES(?, ?)";
+						PreparedStatement insertEx = conn.prepareStatement(insert);
+						insertEx.setDouble(1, userNumber);
+						insertEx.setDouble(2, exId);
+						insertEx.setDouble(3, weight);
+						insertEx.setDouble(4,  sets);
+						insertEx.setString(5, reps);
+					} else {
+						
+					}
+					
+					// check if done
+					System.out.println("Update more or done? [u/d]");
+					String done = input.nextLine();
+					if (done.indexOf('d') >= 0) {
+						break;
+					}
+				}
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+			}
+			
 		}
 		
 		input.close();
