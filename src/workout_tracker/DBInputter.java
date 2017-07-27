@@ -260,19 +260,41 @@ public class DBInputter {
 					System.out.println("Reps? (ex: 8 8 8 8)");
 					String reps = input.nextLine();
 					
-					int exId; // TODO sql select query to get exercise id num
+					// obtain exercise id
+					// TODO exercise legitness check
+					int exID = -1;
+					Statement exIDStat = conn.createStatement();
+					ResultSet exIDrs = exIDStat.executeQuery("SELECT id FROM exercises WHERE"
+						+ " ex_name = '" + exName + "';");
+					while (exIDrs.next()) {
+						exID = exIDrs.getInt("id");
+					}
 					
+					// new exercise entry
 					if (newOp.indexOf('y') >= 0) {
 						String insert = "INSERT INTO user_database(user_id, ex_id,"
-							+ " weight, sets, reps_per_set) VALUES(?, ?)";
+							+ " weight, sets, reps_per_set) VALUES(?, ?, ?, ?, ?)";
 						PreparedStatement insertEx = conn.prepareStatement(insert);
 						insertEx.setDouble(1, userNumber);
-						insertEx.setDouble(2, exId);
+						insertEx.setDouble(2, exID);
 						insertEx.setDouble(3, weight);
-						insertEx.setDouble(4,  sets);
+						insertEx.setDouble(4, sets);
 						insertEx.setString(5, reps);
-					} else {
-						
+						insertEx.executeUpdate();
+					} 
+					
+					// old exercise update
+					else {
+						String update = "UPDATE user_database SET weight = ?,"
+							+ " sets = ?, reps_per_set = ? WHERE user_id = ?"
+							+ " AND ex_id = ?";
+						PreparedStatement updateEx = conn.prepareStatement(update);
+						updateEx.setDouble(1, weight);
+						updateEx.setDouble(2, sets);
+						updateEx.setString(3, reps);
+						updateEx.setDouble(4, userNumber);
+						updateEx.setDouble(5, exID);
+						updateEx.executeUpdate();
 					}
 					
 					// check if done
